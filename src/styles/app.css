@@ -229,46 +229,58 @@ h1 {
   text-transform: uppercase;
 }
 
-.segmented {
+.preset-list {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  overflow: hidden;
-  border: 1px solid var(--color-neutral-700);
-  border-radius: var(--radius-md);
+  gap: 7px;
 }
 
-.segmented label {
+.preset-option {
+  position: relative;
   cursor: pointer;
 }
 
-.segmented label + label {
-  border-left: 1px solid var(--color-neutral-700);
-}
-
-.segmented input {
+.preset-option input {
   position: absolute;
   opacity: 0;
 }
 
-.segmented span {
+.preset-option span {
   display: grid;
-  min-height: 44px;
-  place-items: center;
-  padding: 5px;
+  gap: 2px;
+  min-height: 42px;
+  padding: 7px 10px;
+  border: 1px solid var(--color-neutral-700);
+  border-radius: var(--radius-md);
   color: var(--color-neutral-300);
-  font-size: 11px;
-  text-align: center;
 }
 
-.segmented input:checked + span {
+.preset-option strong {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.preset-option small {
+  color: var(--color-neutral-500);
+  font-size: 9px;
+  line-height: 1.3;
+}
+
+.preset-option input:checked + span {
   background: var(--color-accent-800);
   color: var(--color-accent-100);
   box-shadow: inset 0 0 0 1px var(--color-accent-600);
 }
 
-.segmented input:focus-visible + span {
+.preset-option input:focus-visible + span {
   outline: 2px solid var(--color-accent-300);
   outline-offset: -3px;
+}
+
+.preset-behavior {
+  margin: 10px 0 0;
+  color: var(--color-neutral-500);
+  font-size: 10px;
+  line-height: 1.45;
 }
 
 .range-control + .range-control {

@@ -1,3 +1,5 @@
+import { GEOMETRIES } from '../simulation/geometry';
+
 export function applicationMarkup(): string {
   return `
     <main class="app-shell">
@@ -40,11 +42,15 @@ export function applicationMarkup(): string {
         </div>
         <section class="control-group">
           <h3>Box geometry</h3>
-          <div class="segmented" id="geometry">
-            <label><input type="radio" name="geometry" value="classic" checked><span>Classic</span></label>
-            <label><input type="radio" name="geometry" value="deep"><span>Deep sump</span></label>
-            <label><input type="radio" name="geometry" value="shallow"><span>Shallow</span></label>
+          <div class="preset-list" id="geometry">
+            ${Object.values(GEOMETRIES)
+              .map(
+                (geometry) =>
+                  `<label class="preset-option"><input type="radio" name="geometry" value="${geometry.id}" ${geometry.id === 'classic' ? 'checked' : ''}><span><strong>${geometry.name}</strong><small>${geometry.description}</small></span></label>`,
+              )
+              .join('')}
           </div>
+          <p class="preset-behavior" id="preset-behavior">Selecting a preset starts a fresh deterministic batch with the current parameters.</p>
         </section>
         <section class="control-group">
           <h3>Feed &amp; flow</h3>

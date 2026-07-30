@@ -177,6 +177,8 @@ than visually passing through solid geometry.
 
 ### P2.3 Improve geometry presets
 
+**Status:** Complete (2026-07-30).
+
 **Depends on:** P2.2.
 
 **Goal:** Provide useful, named rock-box configurations that are valid,

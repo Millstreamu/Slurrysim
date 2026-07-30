@@ -19,6 +19,24 @@ unit tested and the renderer can later be replaced without rewriting the model.
 Coordinates are normalized from zero to one. Rendering therefore remains
 responsive while the model stays independent of display resolution.
 
+## Geometry schema and presets
+
+Geometry documents use schema version 1 and contain a stable `id`, display
+`name`, `description`, inlet and weir heights, and a left-to-right list of floor
+points. The migration helper maps the earlier unversioned `classic`, `deep`, and
+`shallow` identifiers into this format. Presets cover a simple slope, symmetric
+and asymmetric sumps, minimum-clearance operation, and a dense collision stress
+profile in addition to the classic reference.
+
+The validator rejects non-finite dimensions, points outside the normalized
+vessel, floors that do not span both walls, and segments whose x coordinates do
+not strictly increase (overlapping or backtracking segments). It also requires
+0.1 normalized units between the ceiling and floor and between the floor and
+each flow opening. This keeps inlet and outlet paths open. All bundled presets
+are validated in data tests. Selecting any preset deliberately clears elapsed
+state and starts a new deterministic batch with the current flow/material
+parameters; the control states this behavior before selection.
+
 ## Current conceptual model
 
 Each rock has position, velocity, radius, effective density, and a deterministic
