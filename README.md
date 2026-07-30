@@ -63,3 +63,9 @@ Run every check with `npm run validate`. Install the Playwright browser once wit
 
 Reset always restores the same seeded scenario. Pause stops simulation time, and
 Release batch adds particles using the current settings.
+
+The animation advances on deterministic fixed time steps, caps retained particles,
+and presents static flow direction cues when reduced motion is preferred. Vessel
+collision boundaries, response rules, and tolerances are documented in
+[`docs/architecture.md`](docs/architecture.md). Add `?debugCollisions` to the URL
+to display the normally hidden collision bounds during development.

@@ -32,6 +32,7 @@ export interface Particle {
   density: number;
   phase: number;
   settled: boolean;
+  collisions: number;
 }
 
 export interface SimulationState {
