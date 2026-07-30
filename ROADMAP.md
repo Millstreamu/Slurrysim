@@ -430,6 +430,9 @@ does not establish engineering validity.
 
 ### P3.1 Define scope, units, assumptions, and equation governance
 
+**Status:** Complete as a draft specification (2026-07-30); qualified domain
+review remains pending and is an explicit gate for equation implementation.
+
 **Goal:** Establish the simulator's valid engineering domain before replacing
 conceptual parameters.
 
