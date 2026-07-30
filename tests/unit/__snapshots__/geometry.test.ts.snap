@@ -62,6 +62,36 @@ exports[`geometry presets > keeps the versioned definitions stable 1`] = `
     "schemaVersion": 1,
     "weirHeight": 0.32,
   },
+  "custom": {
+    "description": "Editable copy of the selected preset.",
+    "floor": [
+      {
+        "x": 0.04,
+        "y": 0.72,
+      },
+      {
+        "x": 0.24,
+        "y": 0.78,
+      },
+      {
+        "x": 0.5,
+        "y": 0.9,
+      },
+      {
+        "x": 0.76,
+        "y": 0.78,
+      },
+      {
+        "x": 0.96,
+        "y": 0.72,
+      },
+    ],
+    "id": "custom",
+    "inletHeight": 0.28,
+    "name": "Custom geometry",
+    "schemaVersion": 1,
+    "weirHeight": 0.32,
+  },
   "deep-symmetric": {
     "description": "Mirrored sides lead into a deep central sump.",
     "floor": [

@@ -80,6 +80,18 @@ export class SimulationRenderer {
     context.lineWidth = 2;
     context.stroke();
 
+    if (this.#canvas.classList.contains('is-editing')) {
+      context.fillStyle = '#f7c873';
+      context.strokeStyle = '#171d30';
+      context.lineWidth = 2;
+      for (const point of geometry.floor) {
+        context.beginPath();
+        context.arc(toX(point.x), toY(point.y), 7, 0, Math.PI * 2);
+        context.fill();
+        context.stroke();
+      }
+    }
+
     context.strokeStyle = '#9184d9';
     context.lineWidth = 3;
     context.beginPath();

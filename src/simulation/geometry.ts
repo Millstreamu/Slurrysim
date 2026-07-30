@@ -28,6 +28,20 @@ const preset = (
 
 /** Versioned, immutable presets in normalized vessel coordinates. */
 export const GEOMETRIES: Readonly<Record<GeometryId, Geometry>> = {
+  custom: preset(
+    'custom',
+    'Custom geometry',
+    'Editable copy of the selected preset.',
+    [
+      { x: 0.04, y: 0.72 },
+      { x: 0.24, y: 0.78 },
+      { x: 0.5, y: 0.9 },
+      { x: 0.76, y: 0.78 },
+      { x: 0.96, y: 0.72 },
+    ],
+    0.28,
+    0.32,
+  ),
   classic: preset(
     'classic',
     'Classic',

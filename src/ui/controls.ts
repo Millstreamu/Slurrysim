@@ -51,4 +51,9 @@ export class Controls {
   get settings(): Settings {
     return { ...this.#settings };
   }
+
+  useGeometry(geometry: GeometryId, notify = true): void {
+    this.#settings = { ...this.#settings, geometry };
+    if (notify) this.#listener(this.settings, { geometryChanged: true });
+  }
 }
