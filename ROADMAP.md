@@ -40,6 +40,18 @@ chat.
 
 ### P0. Make the current artifact runnable and testable
 
+**Status:** Complete (2026-07-30).
+
+The maintained source of truth is the TypeScript application under `src/`. A
+clean checkout is installed with `npm ci`, and `npm run validate` runs formatting,
+linting, type-checking, unit tests, the production build, and Playwright browser
+tests. The setup and validation workflow is documented in `README.md`, and the
+browser smoke coverage is in `tests/e2e/simulator.spec.ts`.
+
+The initial UI was visually reviewed at 1440 × 1000 (desktop) and 390 × 844
+(mobile). Screenshots are kept as review artifacts rather than committed because
+the pull-request workflow does not support binary-file diffs.
+
 **Goal:** Identify the actual source format and establish a reproducible local
 development workflow before feature work. The repository currently needs an
 explicit source-of-truth, setup command, and validation commands.
@@ -700,7 +712,7 @@ Use this template for choices that affect later chats:
 
 ### Phase 2 complete
 
-- [ ] P0 baseline complete
+- [x] P0 baseline complete
 - [ ] P2.1 slurry-flow visualization
 - [ ] P2.2 rock/slurry collisions
 - [ ] P2.3 geometry presets
