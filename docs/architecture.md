@@ -64,7 +64,9 @@ for repeatable tests, but it is not a substitute for engineering calibration.
 
 ## Future engineering work
 
-- Define physical units and parameter ranges.
+- Obtain qualified-domain review of the scope, unit system, equation governance,
+  and API strategy in
+  [`engineering-specification.md`](engineering-specification.md).
 - Select and cite an appropriate settling/drag model.
 - Model slurry viscosity, solids concentration, and particle size distribution.
 - Consider optional particle-particle collisions (vessel collisions are modeled).

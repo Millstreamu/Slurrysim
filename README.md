@@ -51,6 +51,9 @@ Run every check with `npm run validate`. Install the Playwright browser once wit
 - The legacy image assets at the repository root preserve the original interface
   mockups unchanged, avoiding binary-file changes in pull requests.
 - `docs/architecture.md` documents the model, assumptions, and extension points.
+- `docs/engineering-specification.md` defines the proposed Phase 3 scope, units,
+  equation-governance gates, and unit-safe API strategy. Its domain-review status
+  is pending; it does not make the prototype engineering-valid.
 
 ## Simulation controls
 
