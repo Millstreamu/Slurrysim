@@ -10,6 +10,13 @@ export const DEFAULT_SETTINGS: Settings = {
   density: 68,
 };
 
+export const MAX_PARTICLES = 600;
+export const COLLISION_TOLERANCE = 0.0005;
+const LEFT_WALL = 0.04;
+const RIGHT_WALL = 0.96;
+const SURFACE_FRICTION = 0.82;
+const MAX_SPEED = 1.5;
+
 const clamp = (value: number, minimum: number, maximum: number): number =>
   Math.max(minimum, Math.min(maximum, value));
 
@@ -51,11 +58,12 @@ export function releaseBatch(
       density: settings.density / 100,
       phase: hash(id + 59) * Math.PI * 2,
       settled: false,
+      collisions: 0,
     });
   }
   return {
     ...state,
-    particles: [...state.particles, ...particles],
+    particles: [...state.particles, ...particles].slice(-MAX_PARTICLES),
     nextId: state.nextId + particles.length,
     released: state.released + particles.length,
   };
@@ -68,7 +76,11 @@ export function stepSimulation(
 ): SimulationState {
   const settings = clampSettings(rawSettings);
   const geometry = GEOMETRIES[settings.geometry];
-  const deltaTime = clamp(rawDeltaTime, 0, 0.05);
+  const deltaTime = clamp(
+    Number.isFinite(rawDeltaTime) ? rawDeltaTime : 0,
+    0,
+    0.05,
+  );
   let overflowed = state.overflowed;
   const particles: Particle[] = [];
 
@@ -78,35 +90,78 @@ export function stepSimulation(
       continue;
     }
 
-    const floor = floorAt(geometry, particle.x) - particle.radius;
     const eddy = Math.sin(state.elapsed * 5 + particle.phase + particle.x * 8);
     const flow = 0.035 + settings.flowRate * 0.0013;
     const suspension = settings.pressure * 0.00075;
     const gravity = 0.17 + particle.density * 0.23 - suspension;
     const turbulence = (settings.turbulence / 100) * 0.075;
-    const vx =
+    let vx =
       particle.vx * 0.987 + flow * deltaTime + eddy * turbulence * deltaTime;
-    const vy = particle.vy * 0.985 + (gravity + eddy * turbulence) * deltaTime;
-    const x = particle.x + vx * deltaTime;
-    const y = particle.y + vy * deltaTime;
+    let vy = particle.vy * 0.985 + (gravity + eddy * turbulence) * deltaTime;
+    vx = clamp(Number.isFinite(vx) ? vx : 0, -MAX_SPEED, MAX_SPEED);
+    vy = clamp(Number.isFinite(vy) ? vy : 0, -MAX_SPEED, MAX_SPEED);
 
-    if (x > 1.02) {
-      overflowed += 1;
-      continue;
+    // Substeps keep a fast particle from tunnelling through a thin boundary.
+    const distance = Math.hypot(vx, vy) * deltaTime;
+    const substeps = Math.max(
+      1,
+      Math.ceil(distance / Math.max(particle.radius * 0.5, 0.002)),
+    );
+    const step = deltaTime / substeps;
+    let x = Number.isFinite(particle.x)
+      ? particle.x
+      : LEFT_WALL + particle.radius;
+    let y = Number.isFinite(particle.y) ? particle.y : geometry.inletHeight;
+    let collisions = particle.collisions ?? 0;
+    let settled = false;
+    let exited = false;
+
+    for (let index = 0; index < substeps; index += 1) {
+      x += vx * step;
+      y += vy * step;
+
+      const minimumX = LEFT_WALL + particle.radius;
+      if (x < minimumX) {
+        x = minimumX + COLLISION_TOLERANCE;
+        vx = Math.abs(vx) * SURFACE_FRICTION;
+        collisions += 1;
+      }
+      const ceiling = 0.12 + particle.radius;
+      if (y < ceiling) {
+        y = ceiling + COLLISION_TOLERANCE;
+        vy = Math.abs(vy) * SURFACE_FRICTION;
+        collisions += 1;
+      }
+
+      const canExit = y + particle.radius <= geometry.weirHeight;
+      if (canExit && x - particle.radius > RIGHT_WALL) {
+        exited = true;
+        break;
+      }
+      if (!canExit && x > RIGHT_WALL - particle.radius) {
+        x = RIGHT_WALL - particle.radius - COLLISION_TOLERANCE;
+        vx = -Math.abs(vx) * SURFACE_FRICTION;
+        collisions += 1;
+      }
+
+      const floor = floorAt(geometry, x) - particle.radius;
+      if (y >= floor - COLLISION_TOLERANCE) {
+        y = floor - COLLISION_TOLERANCE;
+        collisions += 1;
+        // A direct/slow hit settles; a glancing hit slides along the rock face.
+        if (Math.abs(vy) > Math.abs(vx) * 0.45 || Math.hypot(vx, vy) < 0.04) {
+          vx = 0;
+          vy = 0;
+          settled = true;
+          break;
+        }
+        vx *= SURFACE_FRICTION;
+        vy = -Math.abs(vy) * 0.12;
+      }
     }
 
-    if (y >= floor) {
-      particles.push({
-        ...particle,
-        x: clamp(x, 0.03, 0.97),
-        y: floor,
-        vx: 0,
-        vy: 0,
-        settled: true,
-      });
-    } else {
-      particles.push({ ...particle, x, y: Math.max(0.12, y), vx, vy });
-    }
+    if (exited) overflowed += 1;
+    else particles.push({ ...particle, x, y, vx, vy, settled, collisions });
   }
 
   return {

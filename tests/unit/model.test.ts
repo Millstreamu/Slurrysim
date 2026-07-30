@@ -59,6 +59,7 @@ describe('simulation model', () => {
           density: 0.5,
           phase: 0,
           settled: true,
+          collisions: 1,
         },
         {
           id: 2,
@@ -70,6 +71,7 @@ describe('simulation model', () => {
           density: 0.5,
           phase: 1,
           settled: false,
+          collisions: 0,
         },
       ],
     };

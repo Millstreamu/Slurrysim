@@ -5,13 +5,20 @@ export class SimulationRenderer {
   readonly #context: CanvasRenderingContext2D;
   readonly #canvas: HTMLCanvasElement;
   readonly #observer: ResizeObserver;
+  readonly #debug: boolean;
+  readonly #reducedMotion: boolean;
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(
+    canvas: HTMLCanvasElement,
+    options = { debug: false, reducedMotion: false },
+  ) {
     const context = canvas.getContext('2d');
     if (!context)
       throw new Error('Canvas 2D is not supported by this browser.');
     this.#canvas = canvas;
     this.#context = context;
+    this.#debug = options.debug;
+    this.#reducedMotion = options.reducedMotion;
     this.#observer = new ResizeObserver(() => this.resize());
     this.#observer.observe(canvas);
     this.resize();
@@ -83,9 +90,11 @@ export class SimulationRenderer {
     const flowCount = 7;
     context.lineCap = 'round';
     for (let index = 0; index < flowCount; index += 1) {
-      const phase =
-        (state.elapsed * (0.05 + settings.flowRate / 600) + index / flowCount) %
-        1;
+      const phase = this.#reducedMotion
+        ? index / flowCount
+        : (state.elapsed * (0.05 + settings.flowRate / 600) +
+            index / flowCount) %
+          1;
       const y = height * (0.28 + index * 0.045);
       context.strokeStyle = `rgba(107, 135, 224, ${0.12 + index * 0.018})`;
       context.lineWidth = 2;
@@ -120,6 +129,23 @@ export class SimulationRenderer {
       context.beginPath();
       context.arc(toX(particle.x), toY(particle.y), radius, 0, Math.PI * 2);
       context.fill();
+    }
+
+    if (this.#debug) {
+      context.save();
+      context.setLineDash([5, 4]);
+      context.strokeStyle = '#ffb86b';
+      context.lineWidth = 1;
+      context.strokeRect(
+        toX(0.04),
+        toY(0.12),
+        toX(0.92),
+        toY(geometry.weirHeight - 0.12),
+      );
+      context.fillStyle = '#ffb86b';
+      context.font = '11px sans-serif';
+      context.fillText('collision bounds · ?debugCollisions', 14, height - 14);
+      context.restore();
     }
   }
 }

@@ -101,6 +101,8 @@ items provide a final systematic pass rather than postponing those concerns.
 
 ### P2.1 Refine slurry-flow visualization
 
+**Status:** Complete (2026-07-30).
+
 **Goal:** Make motion, direction, concentration, and simulator state easier to
 understand while keeping animation stable and performant.
 
@@ -136,6 +138,8 @@ understand while keeping animation stable and performant.
 > roadmap, commit the work, and prepare a pull request.
 
 ### P2.2 Add rock/slurry collision behavior
+
+**Status:** Complete (2026-07-30).
 
 **Depends on:** P2.1.
 

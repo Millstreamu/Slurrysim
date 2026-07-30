@@ -4,10 +4,12 @@ import {
   createState,
   DEFAULT_SETTINGS,
   getMetrics,
+  MAX_PARTICLES,
   releaseBatch,
   stepSimulation,
 } from './simulation/model';
 import { SimulationRenderer } from './simulation/renderer';
+import { advanceClock, type SimulationClock } from './simulation/timing';
 import type { Settings, SimulationState } from './simulation/types';
 import { Controls } from './ui/controls';
 import { applicationMarkup } from './ui/markup';
@@ -23,7 +25,12 @@ let settings: Settings = { ...DEFAULT_SETTINGS };
 let state: SimulationState = releaseBatch(createState(), settings);
 let paused = false;
 let previousTime = performance.now();
-const renderer = new SimulationRenderer(canvas);
+let clock: SimulationClock = { accumulator: 0 };
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const renderer = new SimulationRenderer(canvas, {
+  debug: new URLSearchParams(location.search).has('debugCollisions'),
+  reducedMotion: reducedMotion.matches,
+});
 const controls = new Controls(settings, (nextSettings) => {
   settings = nextSettings;
 });
@@ -43,6 +50,7 @@ const statusContainer = required<HTMLDivElement>('.canvas-status');
 reset.addEventListener('click', () => {
   settings = controls.settings;
   state = releaseBatch(createState(), settings);
+  clock = { accumulator: 0 };
 });
 
 pause.addEventListener('click', () => {
@@ -65,12 +73,28 @@ function updateMetrics(): void {
   required('#metric-overflowed').textContent = String(metrics.overflowed);
   required('#metric-travel').textContent =
     `${Math.round(metrics.averageTravel * 100)}%`;
+  if (!paused) {
+    const label =
+      metrics.active + metrics.settled === 0
+        ? 'Empty'
+        : state.particles.length >= MAX_PARTICLES
+          ? 'Overloaded'
+          : 'Running';
+    status.textContent = label;
+    statusContainer.classList.toggle('is-overloaded', label === 'Overloaded');
+    canvas!.setAttribute(
+      'aria-label',
+      `${label} · animated conceptual rock box and slurry flow`,
+    );
+  }
 }
 
 function frame(time: number): void {
   const deltaTime = (time - previousTime) / 1000;
   previousTime = time;
-  if (!paused) state = stepSimulation(state, settings, deltaTime);
+  clock = advanceClock(clock, deltaTime, paused, (step) => {
+    state = stepSimulation(state, settings, step);
+  });
   renderer.render(state, settings);
   updateMetrics();
   requestAnimationFrame(frame);
