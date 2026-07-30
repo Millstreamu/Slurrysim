@@ -1,4 +1,5 @@
 import type { GeometryId, Settings } from '../simulation/types';
+import { PairedControl } from './paired-control';
 
 type SettingsListener = (
   settings: Settings,
@@ -26,13 +27,19 @@ export class Controls {
     ] as const;
     for (const key of keys) {
       const input = document.querySelector<HTMLInputElement>(`#${key}`);
-      const output = document.querySelector<HTMLOutputElement>(`#${key}-value`);
-      if (!input || !output) throw new Error(`Missing control: ${key}`);
-      input.addEventListener('input', () => {
-        const value = Number(input.value);
-        this.#settings = { ...this.#settings, [key]: value };
-        output.value = `${value}${input.dataset.suffix ?? ''}`;
-        this.#listener(this.settings, { geometryChanged: false });
+      const number = document.querySelector<HTMLInputElement>(`#${key}-number`);
+      const error = document.querySelector<HTMLElement>(`#${key}-error`);
+      if (!input || !number || !error)
+        throw new Error(`Missing control: ${key}`);
+      new PairedControl({
+        range: input,
+        number,
+        error,
+        initialValue: this.#settings[key],
+        onCommit: (value) => {
+          this.#settings = { ...this.#settings, [key]: value };
+          this.#listener(this.settings, { geometryChanged: false });
+        },
       });
     }
   }

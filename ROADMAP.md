@@ -247,6 +247,8 @@ without allowing unusable scenarios.
 
 ### P2.5 Add accessible keyboard controls
 
+**Status:** Complete (2026-07-30).
+
 **Can overlap with:** P2.6 after its control contract is agreed.
 
 **Goal:** Make the complete simulator operable and understandable without a
@@ -282,6 +284,8 @@ pointer.
 
 ### P2.6 Add numeric inputs alongside sliders
 
+**Status:** Complete (2026-07-30).
+
 **Goal:** Allow precise parameter entry while keeping sliders and numeric fields
 synchronized and accessible.
 
@@ -311,6 +315,8 @@ synchronized and accessible.
 > commit the work, and prepare a pull request.
 
 ### P2.7 Display calculated settling and overflow metrics
+
+**Status:** Complete (2026-07-30).
 
 **Depends on:** P2.1 and a stable conceptual parameter model. Phase 2 metrics
 must be labeled as illustrative until Phase 3 equations are validated.
@@ -348,6 +354,8 @@ metrics.
 
 ### P2.8 Improve responsive behavior
 
+**Status:** Complete (2026-07-30).
+
 **Depends on:** P2.4–P2.7 so all final controls are available to test.
 
 **Goal:** Make simulation, editing, controls, and results usable across phones,
@@ -381,6 +389,10 @@ tablets, desktops, zoomed layouts, and touch devices.
 > the work, and prepare a pull request.
 
 ### P2.9 Phase 2 review gate
+
+**Status:** Complete (2026-07-30). The review evidence, manual checklist,
+representative regression scenarios, and deferred limitations are recorded in
+[`docs/phase-2-review.md`](docs/phase-2-review.md).
 
 **Goal:** Verify that the prototype is coherent before physical-equation work
 changes its domain model.

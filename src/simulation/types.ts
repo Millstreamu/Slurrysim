@@ -51,6 +51,8 @@ export interface SimulationState {
   nextId: number;
   released: number;
   overflowed: number;
+  /** Particles removed only to enforce the visualization resource cap. */
+  discarded: number;
 }
 
 export interface Metrics {
@@ -58,4 +60,12 @@ export interface Metrics {
   settled: number;
   overflowed: number;
   averageTravel: number;
+  elapsedSeconds: number;
+  released: number;
+  retained: number;
+  discarded: number;
+  settlingFraction: number | null;
+  overflowFraction: number | null;
+  settlingRate: number | null;
+  overflowRate: number | null;
 }

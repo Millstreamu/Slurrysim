@@ -32,7 +32,14 @@ export function clampSettings(settings: Settings): Settings {
 }
 
 export function createState(): SimulationState {
-  return { particles: [], elapsed: 0, nextId: 1, released: 0, overflowed: 0 };
+  return {
+    particles: [],
+    elapsed: 0,
+    nextId: 1,
+    released: 0,
+    overflowed: 0,
+    discarded: 0,
+  };
 }
 
 function hash(seed: number): number {
@@ -61,11 +68,14 @@ export function releaseBatch(
       collisions: 0,
     });
   }
+  const combined = [...state.particles, ...particles];
+  const discarded = Math.max(0, combined.length - MAX_PARTICLES);
   return {
     ...state,
-    particles: [...state.particles, ...particles].slice(-MAX_PARTICLES),
+    particles: combined.slice(-MAX_PARTICLES),
     nextId: state.nextId + particles.length,
     released: state.released + particles.length,
+    discarded: state.discarded + discarded,
   };
 }
 
@@ -183,5 +193,15 @@ export function getMetrics(state: SimulationState): Metrics {
     settled,
     overflowed: state.overflowed,
     averageTravel,
+    elapsedSeconds: Number.isFinite(state.elapsed)
+      ? Math.max(0, state.elapsed)
+      : 0,
+    released: state.released,
+    retained: state.particles.length,
+    discarded: state.discarded,
+    settlingFraction: state.released ? settled / state.released : null,
+    overflowFraction: state.released ? state.overflowed / state.released : null,
+    settlingRate: state.elapsed > 0 ? settled / state.elapsed : null,
+    overflowRate: state.elapsed > 0 ? state.overflowed / state.elapsed : null,
   };
 }

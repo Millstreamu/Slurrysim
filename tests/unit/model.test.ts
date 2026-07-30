@@ -48,6 +48,8 @@ describe('simulation model', () => {
     const state = {
       ...createState(),
       overflowed: 2,
+      released: 4,
+      elapsed: 2,
       particles: [
         {
           id: 1,
@@ -80,6 +82,29 @@ describe('simulation model', () => {
       settled: 1,
       overflowed: 2,
       averageTravel: 0.4,
+      elapsedSeconds: 2,
+      released: 4,
+      retained: 2,
+      discarded: 0,
+      settlingFraction: 0.25,
+      overflowFraction: 0.5,
+      settlingRate: 0.5,
+      overflowRate: 1,
     });
+  });
+
+  it('uses explicit empty metric states and conserves particle accounting', () => {
+    const empty = getMetrics(createState());
+    expect(empty.settlingFraction).toBeNull();
+    expect(empty.overflowRate).toBeNull();
+
+    let state = createState();
+    for (let index = 0; index < 11; index += 1)
+      state = releaseBatch(state, { ...DEFAULT_SETTINGS, batchSize: 60 });
+    const metrics = getMetrics(state);
+    expect(metrics.released).toBe(
+      metrics.retained + metrics.overflowed + metrics.discarded,
+    );
+    expect(metrics.discarded).toBe(60);
   });
 });

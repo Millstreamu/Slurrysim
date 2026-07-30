@@ -68,6 +68,20 @@ Run every check with `npm run validate`. Install the Playwright browser once wit
 - **Turbulence** controls deterministic eddy forces.
 - **Material density** changes effective settling acceleration.
 
+Each conceptual parameter has a synchronized slider and numeric field. Numeric
+edits commit on Enter or blur, snap to the documented step, and remain uncommitted
+with an inline error when empty, non-numeric, or outside the stated range. The
+fields use a period as the decimal separator (HTML number-input convention).
+
+Open **Keyboard help** (or press `?` outside a form control) for all shortcuts.
+`Space` pauses/resumes, `R` resets the run, and `B` releases a batch. Native Tab,
+Shift+Tab, arrow-key, and editor button/field behavior remains available.
+
+The results panel reports cumulative particle counts and fractions, elapsed
+simulation seconds, and average cumulative rates in particles/second. A dash is
+shown when a fraction or rate has no valid denominator. These metrics are
+illustrative and are not engineering validated.
+
 Reset always restores the same seeded scenario. Pause stops simulation time, and
 Release batch adds particles using the current settings.
 

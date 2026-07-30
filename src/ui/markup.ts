@@ -10,6 +10,7 @@ export function applicationMarkup(): string {
             <h1 id="page-title">Rock Box Simulator</h1>
           </div>
           <div class="actions" aria-label="Simulation actions">
+            <button class="btn btn-secondary" id="shortcuts" type="button" aria-keyshortcuts="?">Keyboard help</button>
             <button class="btn btn-secondary" id="reset" type="button">Reset</button>
             <button class="btn btn-secondary" id="pause" type="button">Pause</button>
             <button class="btn btn-primary" id="release" type="button">Release batch</button>
@@ -19,6 +20,7 @@ export function applicationMarkup(): string {
         <section class="simulation-card" aria-label="Rock box simulation">
           <canvas id="simulation" role="img" aria-label="Animated conceptual rock box and slurry flow"></canvas>
           <div class="canvas-status"><span class="status-dot"></span><span id="run-status">Running</span></div>
+          <p class="sr-only" id="simulation-announcer" aria-live="polite" aria-atomic="true"></p>
         </section>
 
         <div class="legend" aria-label="Simulation legend">
@@ -27,11 +29,16 @@ export function applicationMarkup(): string {
           <span><i class="legend-weir"></i> Overflow weir</span>
         </div>
 
-        <section class="metrics" aria-label="Simulation results">
+        <section class="metrics" aria-labelledby="results-title">
+          <div class="results-heading"><h2 id="results-title">Illustrative results</h2><span>Conceptual · not engineering validated</span></div>
           <article><span>In motion</span><strong id="metric-active">0</strong></article>
           <article><span>Settled</span><strong id="metric-settled">0</strong></article>
           <article><span>Overflowed</span><strong id="metric-overflowed">0</strong></article>
-          <article><span>Average travel</span><strong id="metric-travel">0%</strong></article>
+          <article><span>Elapsed simulation time</span><strong id="metric-elapsed">0.0 s</strong></article>
+          <article><span>Settling fraction</span><strong id="metric-settling-fraction">—</strong></article>
+          <article><span>Overflow fraction</span><strong id="metric-overflow-fraction">—</strong></article>
+          <article><span>Settling rate</span><strong id="metric-settling-rate">—</strong></article>
+          <article><span>Overflow rate</span><strong id="metric-overflow-rate">—</strong></article>
         </section>
       </section>
 
@@ -84,6 +91,12 @@ export function applicationMarkup(): string {
         </section>
         <p class="disclaimer"><strong>Conceptual model.</strong> Results are visual estimates and are not suitable for engineering or safety decisions.</p>
       </aside>
+      <dialog id="shortcuts-dialog" aria-labelledby="shortcuts-title">
+        <div class="dialog-heading"><h2 id="shortcuts-title">Keyboard shortcuts</h2><button class="btn btn-secondary" id="shortcuts-close" type="button">Close</button></div>
+        <p>Shortcuts work outside form fields. Tab and Shift+Tab move through every control.</p>
+        <dl><div><dt><kbd>Space</kbd></dt><dd>Pause or resume</dd></div><div><dt><kbd>R</kbd></dt><dd>Reset the run</dd></div><div><dt><kbd>B</kbd></dt><dd>Release a batch</dd></div><div><dt><kbd>?</kbd></dt><dd>Open this help</dd></div><div><dt><kbd>Esc</kbd></dt><dd>Close help or cancel a number edit</dd></div><div><dt><kbd>Arrow keys</kbd></dt><dd>Adjust sliders and number fields</dd></div></dl>
+        <p>In the shape editor, use Tab to reach Add, Delete, Undo, Redo, Reset, and precise X/Y fields.</p>
+      </dialog>
     </main>`;
 }
 
@@ -96,9 +109,13 @@ function rangeMarkup(
   suffix: string,
   description: string,
 ): string {
+  const numberId = `${id}-number`;
+  const descriptionId = `${id}-description`;
+  const errorId = `${id}-error`;
   return `<div class="range-control">
-    <div class="range-label"><label for="${id}">${label}</label><output id="${id}-value" for="${id}">${value}${suffix}</output></div>
-    <input id="${id}" type="range" min="${minimum}" max="${maximum}" value="${value}" data-suffix="${suffix}">
-    <p>${description}</p>
+    <div class="range-label"><label for="${id}">${label}</label><span class="unit">${suffix.trim() || 'dimensionless'}</span></div>
+    <div class="paired-input"><input id="${id}" aria-label="${label} slider" aria-describedby="${descriptionId}" type="range" min="${minimum}" max="${maximum}" step="1" value="${value}"><input id="${numberId}" aria-label="${label} value" aria-describedby="${descriptionId} ${errorId}" type="number" inputmode="decimal" min="${minimum}" max="${maximum}" step="1" value="${value}"></div>
+    <p id="${descriptionId}">${description} Default ${value}; range ${minimum}–${maximum}; step 1.</p>
+    <p class="field-error" id="${errorId}" aria-live="polite"></p>
   </div>`;
 }
