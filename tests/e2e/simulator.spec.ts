@@ -16,8 +16,9 @@ test('loads and operates the simulator', async ({ page }) => {
   await expect(page.getByText('Paused', { exact: true })).toBeVisible();
 
   await page.getByRole('button', { name: 'Release batch' }).click();
-  await page.getByLabel('Deep sump').check();
-  await expect(page.getByLabel('Deep sump')).toBeChecked();
+  await page.getByLabel(/Deep symmetric/).check();
+  await expect(page.getByLabel(/Deep symmetric/)).toBeChecked();
+  await expect(page.locator('#metric-active')).toHaveText('34');
 });
 
 test('has no obvious accessibility violations in control semantics', async ({
@@ -26,7 +27,7 @@ test('has no obvious accessibility violations in control semantics', async ({
   await page.goto('/');
   await expect(page.getByRole('main')).toBeVisible();
   await expect(page.getByRole('slider')).toHaveCount(5);
-  await expect(page.getByRole('radio')).toHaveCount(3);
+  await expect(page.getByRole('radio')).toHaveCount(6);
   await expect(
     page.getByRole('img', { name: /animated conceptual rock box/i }),
   ).toBeVisible();

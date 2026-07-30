@@ -1,13 +1,22 @@
-export type GeometryId = 'classic' | 'deep' | 'shallow';
+export type GeometryId =
+  | 'classic'
+  | 'simple-slope'
+  | 'deep-symmetric'
+  | 'asymmetric'
+  | 'narrow-clearance'
+  | 'stress-test';
 
 export interface Point {
   x: number;
   y: number;
 }
 
+/** Serializable geometry schema. Increment when stored geometry meaning changes. */
 export interface Geometry {
+  schemaVersion: 1;
   id: GeometryId;
-  label: string;
+  name: string;
+  description: string;
   floor: readonly Point[];
   inletHeight: number;
   weirHeight: number;

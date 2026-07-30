@@ -54,7 +54,9 @@ Run every check with `npm run validate`. Install the Playwright browser once wit
 
 ## Simulation controls
 
-- **Geometry presets** change the box floor and weir profile.
+- **Geometry presets** provide six named, validated profiles for baseline,
+  symmetric, asymmetric, narrow-clearance, and stress comparisons. Selecting a
+  preset starts a fresh deterministic batch with the current parameters.
 - **Flow rate** controls the horizontal slurry current.
 - **Line pressure** controls how strongly particles remain suspended.
 - **Batch size** controls how many rocks are released per batch.

@@ -1,6 +1,9 @@
 import type { GeometryId, Settings } from '../simulation/types';
 
-type SettingsListener = (settings: Settings) => void;
+type SettingsListener = (
+  settings: Settings,
+  change: { geometryChanged: boolean },
+) => void;
 
 export class Controls {
   #settings: Settings;
@@ -29,7 +32,7 @@ export class Controls {
         const value = Number(input.value);
         this.#settings = { ...this.#settings, [key]: value };
         output.value = `${value}${input.dataset.suffix ?? ''}`;
-        this.#listener(this.settings);
+        this.#listener(this.settings, { geometryChanged: false });
       });
     }
   }
@@ -41,7 +44,7 @@ export class Controls {
         ...this.#settings,
         geometry: input.value as GeometryId,
       };
-      this.#listener(this.settings);
+      this.#listener(this.settings, { geometryChanged: true });
     });
   }
 

@@ -31,8 +31,12 @@ const renderer = new SimulationRenderer(canvas, {
   debug: new URLSearchParams(location.search).has('debugCollisions'),
   reducedMotion: reducedMotion.matches,
 });
-const controls = new Controls(settings, (nextSettings) => {
+const controls = new Controls(settings, (nextSettings, change) => {
   settings = nextSettings;
+  if (change.geometryChanged) {
+    state = releaseBatch(createState(), settings);
+    clock = { accumulator: 0 };
+  }
 });
 
 const required = <T extends Element>(selector: string): T => {
