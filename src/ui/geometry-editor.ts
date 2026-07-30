@@ -112,6 +112,7 @@ export class GeometryEditor {
   #state = new GeometryEditorState(this.asCustom(GEOMETRIES.classic));
   #preset: GeometryId = 'classic';
   #editing = false;
+  #focusBeforeEdit: HTMLElement | null = null;
   readonly #canvas: HTMLCanvasElement;
   readonly #listener: ChangeListener;
 
@@ -141,11 +142,13 @@ export class GeometryEditor {
 
   private bind(): void {
     document.querySelector('#edit-geometry')?.addEventListener('click', () => {
+      this.#focusBeforeEdit = document.activeElement as HTMLElement;
       this.#editing = true;
       this.#state = new GeometryEditorState(
         this.asCustom(GEOMETRIES[this.#preset]),
       );
       this.render();
+      document.querySelector<HTMLElement>('#editor-add')?.focus();
     });
     document
       .querySelector('#simulate-geometry')
@@ -153,6 +156,7 @@ export class GeometryEditor {
         if (validateGeometry(this.#state.snapshot.geometry).length) return;
         this.#editing = false;
         this.render();
+        this.#focusBeforeEdit?.focus();
       });
     document.querySelector('#editor-undo')?.addEventListener('click', () => {
       this.#state.undo();
@@ -165,6 +169,7 @@ export class GeometryEditor {
     document.querySelector('#editor-delete')?.addEventListener('click', () => {
       this.#state.deleteSelected();
       this.render();
+      document.querySelector<HTMLElement>('#editor-add')?.focus();
     });
     document.querySelector('#editor-reset')?.addEventListener('click', () => {
       this.#state.reset(this.asCustom(GEOMETRIES[this.#preset]));

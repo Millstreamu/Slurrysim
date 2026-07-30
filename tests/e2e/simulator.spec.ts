@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
 
 test('loads and operates the simulator', async ({ page }) => {
   await page.goto('/');
@@ -27,11 +28,61 @@ test('has no obvious accessibility violations in control semantics', async ({
   await page.goto('/');
   await expect(page.getByRole('main')).toBeVisible();
   await expect(page.getByRole('slider')).toHaveCount(5);
+  await expect(page.getByRole('spinbutton')).toHaveCount(5);
   await expect(page.getByRole('radio')).toHaveCount(6);
   await expect(
     page.getByRole('img', { name: /animated conceptual rock box/i }),
   ).toBeVisible();
+  const results = await new AxeBuilder({ page }).analyze();
+  expect(results.violations).toEqual([]);
 });
+
+test('supports shortcuts, focus restoration, and precise numeric input', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.keyboard.press('?');
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.getByRole('button', { name: 'Close' }).click();
+  await expect(
+    page.getByRole('button', { name: 'Keyboard help' }),
+  ).toBeFocused();
+
+  await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+  await page.keyboard.press('Space');
+  await expect(page.getByRole('button', { name: 'Resume' })).toBeVisible();
+  const numeric = page.getByRole('spinbutton', { name: 'Flow rate value' });
+  await numeric.fill('72');
+  await numeric.press('Enter');
+  await expect(
+    page.getByRole('slider', { name: 'Flow rate slider' }),
+  ).toHaveValue('72');
+  await numeric.fill('999');
+  await numeric.press('Enter');
+  await expect(page.locator('#flowRate-error')).toContainText('0 to 100');
+  await expect(numeric).toHaveAttribute('aria-invalid', 'true');
+});
+
+for (const viewport of [
+  { name: 'phone', width: 390, height: 844 },
+  { name: 'tablet', width: 820, height: 1180 },
+  { name: 'desktop', width: 1440, height: 1000 },
+]) {
+  test(`is usable without horizontal overflow at ${viewport.name}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    await page.goto('/');
+    const dimensions = await page.evaluate(() => ({
+      scrollWidth: document.documentElement.scrollWidth,
+      clientWidth: document.documentElement.clientWidth,
+    }));
+    expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
+    await expect(
+      page.getByRole('heading', { name: 'Illustrative results' }),
+    ).toBeVisible();
+  });
+}
 
 test('edits custom geometry with pointer and keyboard controls', async ({
   page,

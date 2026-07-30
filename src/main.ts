@@ -60,11 +60,20 @@ const pause = required<HTMLButtonElement>('#pause');
 const release = required<HTMLButtonElement>('#release');
 const status = required<HTMLSpanElement>('#run-status');
 const statusContainer = required<HTMLDivElement>('.canvas-status');
+const announcer = required<HTMLParagraphElement>('#simulation-announcer');
+const shortcuts = required<HTMLButtonElement>('#shortcuts');
+const shortcutsDialog = required<HTMLDialogElement>('#shortcuts-dialog');
+
+const announce = (message: string): void => {
+  announcer.textContent = '';
+  window.setTimeout(() => (announcer.textContent = message), 20);
+};
 
 reset.addEventListener('click', () => {
   settings = controls.settings;
   state = releaseBatch(createState(), settings);
   clock = { accumulator: 0 };
+  announce('Simulation reset to a fresh deterministic batch.');
 });
 
 pause.addEventListener('click', () => {
@@ -73,11 +82,32 @@ pause.addEventListener('click', () => {
   pause.setAttribute('aria-pressed', String(paused));
   status.textContent = paused ? 'Paused' : 'Running';
   statusContainer.classList.toggle('is-paused', paused);
+  announce(paused ? 'Simulation paused.' : 'Simulation resumed.');
 });
 
 release.addEventListener('click', () => {
   settings = controls.settings;
   state = releaseBatch(state, settings);
+  announce(`Released ${settings.batchSize} particles.`);
+});
+
+shortcuts.addEventListener('click', () => shortcutsDialog.showModal());
+required<HTMLButtonElement>('#shortcuts-close').addEventListener('click', () =>
+  shortcutsDialog.close(),
+);
+shortcutsDialog.addEventListener('close', () => shortcuts.focus());
+
+document.addEventListener('keydown', (event) => {
+  const target = event.target as HTMLElement;
+  if (target.matches('input, textarea, select, button') || shortcutsDialog.open)
+    return;
+  const key = event.key.toLowerCase();
+  if (event.key === ' ' || key === 'r' || key === 'b' || event.key === '?')
+    event.preventDefault();
+  if (event.key === ' ') pause.click();
+  else if (key === 'r') reset.click();
+  else if (key === 'b') release.click();
+  else if (event.key === '?') shortcuts.click();
 });
 
 function updateMetrics(): void {
@@ -85,8 +115,24 @@ function updateMetrics(): void {
   required('#metric-active').textContent = String(metrics.active);
   required('#metric-settled').textContent = String(metrics.settled);
   required('#metric-overflowed').textContent = String(metrics.overflowed);
-  required('#metric-travel').textContent =
-    `${Math.round(metrics.averageTravel * 100)}%`;
+  required('#metric-elapsed').textContent =
+    `${metrics.elapsedSeconds.toFixed(1)} s`;
+  const fraction = (value: number | null): string =>
+    value === null || !Number.isFinite(value)
+      ? '—'
+      : `${(value * 100).toFixed(1)}%`;
+  const rate = (value: number | null): string =>
+    value === null || !Number.isFinite(value)
+      ? '—'
+      : `${value.toFixed(2)} particles/s`;
+  required('#metric-settling-fraction').textContent = fraction(
+    metrics.settlingFraction,
+  );
+  required('#metric-overflow-fraction').textContent = fraction(
+    metrics.overflowFraction,
+  );
+  required('#metric-settling-rate').textContent = rate(metrics.settlingRate);
+  required('#metric-overflow-rate').textContent = rate(metrics.overflowRate);
   if (!paused) {
     const label =
       metrics.active + metrics.settled === 0
