@@ -44,6 +44,7 @@ export function applicationMarkup(): string {
           <h3>Box geometry</h3>
           <div class="preset-list" id="geometry">
             ${Object.values(GEOMETRIES)
+              .filter((geometry) => geometry.id !== 'custom')
               .map(
                 (geometry) =>
                   `<label class="preset-option"><input type="radio" name="geometry" value="${geometry.id}" ${geometry.id === 'classic' ? 'checked' : ''}><span><strong>${geometry.name}</strong><small>${geometry.description}</small></span></label>`,
@@ -51,6 +52,24 @@ export function applicationMarkup(): string {
               .join('')}
           </div>
           <p class="preset-behavior" id="preset-behavior">Selecting a preset starts a fresh deterministic batch with the current parameters.</p>
+          <button class="btn btn-secondary editor-launch" id="edit-geometry" type="button" aria-pressed="false">Edit selected geometry</button>
+          <section id="geometry-editor" class="geometry-editor" aria-labelledby="editor-title" hidden>
+            <h4 id="editor-title">Custom shape editor</h4>
+            <p id="editor-instructions">Select and move the nearest floor point by clicking the diagram, or use the precise coordinate fields. Values snap to a 0.01 grid.</p>
+            <div class="editor-tools" role="toolbar" aria-label="Geometry editing tools">
+              <button class="btn btn-secondary" id="editor-add" type="button">Add point</button>
+              <button class="btn btn-secondary" id="editor-delete" type="button">Delete selected</button>
+              <button class="btn btn-secondary" id="editor-undo" type="button">Undo</button>
+              <button class="btn btn-secondary" id="editor-redo" type="button">Redo</button>
+              <button class="btn btn-secondary" id="editor-reset" type="button">Reset to preset</button>
+            </div>
+            <div class="coordinate-fields">
+              <label>X coordinate <input id="editor-x" type="number" min="0.04" max="0.96" step="0.01" disabled></label>
+              <label>Y coordinate <input id="editor-y" type="number" min="0.13" max="0.98" step="0.01" disabled></label>
+            </div>
+            <ul id="editor-errors" class="editor-errors" aria-live="polite"></ul>
+            <button class="btn btn-primary" id="simulate-geometry" type="button">Use geometry &amp; simulate</button>
+          </section>
         </section>
         <section class="control-group">
           <h3>Feed &amp; flow</h3>

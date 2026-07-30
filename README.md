@@ -57,6 +57,11 @@ Run every check with `npm run validate`. Install the Playwright browser once wit
 - **Geometry presets** provide six named, validated profiles for baseline,
   symmetric, asymmetric, narrow-clearance, and stress comparisons. Selecting a
   preset starts a fresh deterministic batch with the current parameters.
+- **Custom shape editor** creates an editable copy of the selected preset. In
+  edit mode, click the diagram to select/move the nearest floor point on a 0.01
+  grid, or use the keyboard-operable X/Y fields. Points can be added, deleted,
+  reordered by position, undone/redone, and reset to the preset. Live validation
+  disables **Use geometry & simulate** until errors are fixed.
 - **Flow rate** controls the horizontal slurry current.
 - **Line pressure** controls how strongly particles remain suspended.
 - **Batch size** controls how many rocks are released per batch.

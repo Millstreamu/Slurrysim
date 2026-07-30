@@ -32,3 +32,27 @@ test('has no obvious accessibility violations in control semantics', async ({
     page.getByRole('img', { name: /animated conceptual rock box/i }),
   ).toBeVisible();
 });
+
+test('edits custom geometry with pointer and keyboard controls', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Edit selected geometry' }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Custom shape editor' }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Add point' }).click();
+  await page.getByLabel('X coordinate').fill('0.55');
+  await page.getByLabel('X coordinate').press('Enter');
+  await page.getByLabel('Y coordinate').fill('0.85');
+  await page.getByLabel('Y coordinate').press('Enter');
+  await page.getByRole('button', { name: 'Undo' }).click();
+  await expect(page.getByRole('button', { name: 'Redo' })).toBeEnabled();
+  await page.getByRole('button', { name: 'Redo' }).click();
+  await page.locator('#simulation').click({ position: { x: 300, y: 300 } });
+  await page.getByRole('button', { name: 'Reset to preset' }).click();
+  await page.getByRole('button', { name: 'Use geometry & simulate' }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Custom shape editor' }),
+  ).toBeHidden();
+});

@@ -213,6 +213,8 @@ repeatable, and easy to compare.
 
 ### P2.4 Add the custom shape editor
 
+**Status:** Complete (2026-07-30).
+
 **Depends on:** P2.3.
 
 **Goal:** Let users create, edit, validate, and reset custom rock geometry
@@ -722,7 +724,7 @@ Use this template for choices that affect later chats:
 - [ ] P2.1 slurry-flow visualization
 - [ ] P2.2 rock/slurry collisions
 - [ ] P2.3 geometry presets
-- [ ] P2.4 custom shape editor
+- [x] P2.4 custom shape editor
 - [ ] P2.5 accessible keyboard controls
 - [ ] P2.6 numeric inputs alongside sliders
 - [ ] P2.7 settling and overflow metrics

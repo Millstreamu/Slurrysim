@@ -1,4 +1,5 @@
 export type GeometryId =
+  | 'custom'
   | 'classic'
   | 'simple-slope'
   | 'deep-symmetric'

@@ -12,6 +12,7 @@ import { SimulationRenderer } from './simulation/renderer';
 import { advanceClock, type SimulationClock } from './simulation/timing';
 import type { Settings, SimulationState } from './simulation/types';
 import { Controls } from './ui/controls';
+import { GeometryEditor } from './ui/geometry-editor';
 import { applicationMarkup } from './ui/markup';
 
 const app = document.querySelector<HTMLDivElement>('#app');
@@ -34,7 +35,16 @@ const renderer = new SimulationRenderer(canvas, {
 const controls = new Controls(settings, (nextSettings, change) => {
   settings = nextSettings;
   if (change.geometryChanged) {
+    editor.setPreset(settings.geometry);
     state = releaseBatch(createState(), settings);
+    clock = { accumulator: 0 };
+  }
+});
+const editor = new GeometryEditor(canvas, (_geometry, issues, editing) => {
+  if (editing || issues.length === 0) {
+    controls.useGeometry('custom', false);
+    settings = controls.settings;
+    state = editing ? createState() : releaseBatch(createState(), settings);
     clock = { accumulator: 0 };
   }
 });
