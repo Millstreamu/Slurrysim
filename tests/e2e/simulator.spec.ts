@@ -28,13 +28,48 @@ test('has no obvious accessibility violations in control semantics', async ({
   await page.goto('/');
   await expect(page.getByRole('main')).toBeVisible();
   await expect(page.getByRole('slider')).toHaveCount(5);
-  await expect(page.getByRole('spinbutton')).toHaveCount(5);
+  await expect(page.getByRole('spinbutton')).toHaveCount(12);
   await expect(page.getByRole('radio')).toHaveCount(6);
   await expect(
     page.getByRole('img', { name: /animated conceptual rock box/i }),
   ).toBeVisible();
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations).toEqual([]);
+});
+
+test('validates physical properties and distinguishes applicability warnings', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await expect(page.getByText('Draft inputs · SI stored')).toBeVisible();
+  await expect(page.locator('#kinematic-viscosity')).toHaveText(
+    /1\.0038e-6 m²\/s/i,
+  );
+
+  const density = page.getByLabel('Liquid density');
+  await density.fill('0');
+  await density.press('Tab');
+  await expect(density).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#fluidDensity-diagnostic')).toContainText(
+    'greater than zero',
+  );
+
+  await density.fill('100');
+  await density.press('Tab');
+  await expect(density).not.toHaveAttribute('aria-invalid');
+  await expect(page.locator('#fluidDensity-diagnostic')).toContainText(
+    'draft liquid scope',
+  );
+  await expect(page.locator('#fluidDensity-diagnostic')).toHaveAttribute(
+    'data-status',
+    'outside-applicability',
+  );
+
+  await density.fill('998.2');
+  await density.press('Tab');
+  await expect(page.locator('#kinematic-viscosity')).toHaveText(
+    /1\.0038e-6 m²\/s/i,
+  );
 });
 
 test('supports shortcuts, focus restoration, and precise numeric input', async ({
