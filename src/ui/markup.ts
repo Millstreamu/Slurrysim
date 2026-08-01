@@ -1,4 +1,5 @@
 import { GEOMETRIES } from '../simulation/geometry';
+import { FLUID_PRESETS, PARTICLE_PRESETS } from '../engineering/properties';
 
 export function applicationMarkup(): string {
   return `
@@ -89,6 +90,27 @@ export function applicationMarkup(): string {
           <h3>Rock material</h3>
           ${rangeMarkup('density', 'Material density', 68, 20, 100, '%', 'Relative effective settling weight')}
         </section>
+        <section class="control-group physical-properties" aria-labelledby="physical-properties-title">
+          <div class="property-heading"><h3 id="physical-properties-title">Physical properties</h3><span>Draft inputs · SI stored</span></div>
+          <p>These properties are prepared for the reviewed Phase 3 calculation model. They do not change the conceptual animation yet.</p>
+          <label class="property-preset">Fluid preset
+            <select id="fluid-preset">${presetOptions(FLUID_PRESETS)}</select>
+          </label>
+          <p class="preset-source">Source: <a href="${FLUID_PRESETS[0]!.provenance.url}" target="_blank" rel="noreferrer">${FLUID_PRESETS[0]!.provenance.source}</a>. ${FLUID_PRESETS[0]!.provenance.note}</p>
+          ${propertyInput('fluidDensity', 'Liquid density', 'kg/m³', '998.2', 'any finite value greater than 0')}
+          ${propertyInput('dynamicViscosity', 'Dynamic viscosity', 'mPa·s', '1.002', 'any finite value greater than 0')}
+          ${propertyInput('temperature', 'Temperature', '°C', '20', 'above absolute zero')}
+          <p class="derived-property"><span>Kinematic viscosity (derived)</span><output id="kinematic-viscosity"></output></p>
+          <label class="property-preset">Particle preset
+            <select id="particle-preset">${presetOptions(PARTICLE_PRESETS)}</select>
+          </label>
+          <p class="preset-source">Source: <a href="${PARTICLE_PRESETS[0]!.provenance.url}" target="_blank" rel="noreferrer">${PARTICLE_PRESETS[0]!.provenance.source}</a>. ${PARTICLE_PRESETS[0]!.provenance.note}</p>
+          ${propertyInput('particleDensity', 'Particle density', 'kg/m³', '2650', 'any finite value greater than 0')}
+          ${propertyInput('diameter', 'Equivalent spherical diameter', 'mm', '5', 'any finite value greater than 0')}
+          ${propertyInput('sphericity', 'Sphericity', 'dimensionless', '1', 'greater than 0 and at most 1')}
+          ${propertyInput('solidsVolumeFraction', 'Solids volume fraction', 'm³/m³', '0.1', 'at least 0 and less than 1')}
+          <p class="property-key"><strong>Validation:</strong> errors are invalid physical values; warnings are valid inputs outside the draft applicability envelope. Values are never clamped.</p>
+        </section>
         <p class="disclaimer"><strong>Conceptual model.</strong> Results are visual estimates and are not suitable for engineering or safety decisions.</p>
       </aside>
       <dialog id="shortcuts-dialog" aria-labelledby="shortcuts-title">
@@ -98,6 +120,24 @@ export function applicationMarkup(): string {
         <p>In the shape editor, use Tab to reach Add, Delete, Undo, Redo, Reset, and precise X/Y fields.</p>
       </dialog>
     </main>`;
+}
+
+function presetOptions(
+  presets: readonly { id: string; name: string }[],
+): string {
+  return presets
+    .map(({ id, name }) => `<option value="${id}">${name}</option>`)
+    .join('');
+}
+
+function propertyInput(
+  id: string,
+  label: string,
+  unit: string,
+  value: string,
+  domain: string,
+): string {
+  return `<div class="property-input"><div><label for="${id}">${label}</label><span>${unit}</span></div><input id="${id}" type="number" inputmode="decimal" value="${value}" aria-describedby="${id}-domain ${id}-diagnostic"><small id="${id}-domain">Physical domain: ${domain}.</small><p id="${id}-diagnostic" class="property-diagnostic" aria-live="polite"></p></div>`;
 }
 
 function rangeMarkup(

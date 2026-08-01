@@ -14,10 +14,13 @@ import type { Settings, SimulationState } from './simulation/types';
 import { Controls } from './ui/controls';
 import { GeometryEditor } from './ui/geometry-editor';
 import { applicationMarkup } from './ui/markup';
+import { DEFAULT_PHYSICAL_PROPERTIES } from './engineering/properties';
+import { PropertyControls } from './ui/property-controls';
 
 const app = document.querySelector<HTMLDivElement>('#app');
 if (!app) throw new Error('Application root was not found.');
 app.innerHTML = applicationMarkup();
+new PropertyControls(DEFAULT_PHYSICAL_PROPERTIES);
 
 const canvas = document.querySelector<HTMLCanvasElement>('#simulation');
 if (!canvas) throw new Error('Simulation canvas was not found.');

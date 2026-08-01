@@ -71,6 +71,15 @@ Run every check with `npm run validate`. Install the Playwright browser once wit
 - **Turbulence** controls deterministic eddy forces.
 - **Material density** changes effective settling acceleration.
 
+The **Physical properties** section stores liquid density, dynamic viscosity,
+temperature, particle density, equivalent spherical diameter, sphericity, and
+solids volume fraction in canonical SI quantities. Display conversions occur at
+the UI boundary, and kinematic viscosity is derived rather than accepted as a
+second independent viscosity input. Invalid physical values are shown as errors;
+well-formed values outside the preliminary scope are warnings and are not
+clamped. The sourced presets are deliberately rounded and these draft physical
+inputs do not affect the conceptual animation before an equation is approved.
+
 Each conceptual parameter has a synchronized slider and numeric field. Numeric
 edits commit on Enter or blur, snap to the documented step, and remain uncommitted
 with an inline error when empty, non-numeric, or outside the stated range. The

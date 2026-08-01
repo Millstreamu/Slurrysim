@@ -470,6 +470,9 @@ conceptual parameters.
 
 ### P3.2 Add fluid and particle properties
 
+**Status:** Complete as a draft property/input model (2026-07-30); property and
+applicability ranges remain subject to qualified domain review with P3.3.
+
 **Depends on:** P3.1.
 
 **Goal:** Represent the physical inputs needed by the selected engineering
@@ -749,7 +752,7 @@ Use this template for choices that affect later chats:
 ### Phase 3 complete
 
 - [ ] P3.1 units, assumptions, and governance
-- [ ] P3.2 fluid and particle properties
+- [x] P3.2 fluid and particle properties
 - [ ] P3.3 settling-model selection
 - [ ] P3.4 settling-model implementation
 - [ ] P3.5 calibration and expected-result fixtures
