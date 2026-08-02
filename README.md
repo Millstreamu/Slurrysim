@@ -54,6 +54,9 @@ Run every check with `npm run validate`. Install the Playwright browser once wit
 - `docs/engineering-specification.md` defines the proposed Phase 3 scope, units,
   equation-governance gates, and unit-safe API strategy. Its domain-review status
   is pending; it does not make the prototype engineering-valid.
+- `docs/settling-model-decision.md` records the proposed isolated-sphere settling
+  equations, limits, numerical method, examples, and pending review gate. It is
+  not implemented by the animation.
 
 ## Simulation controls
 
