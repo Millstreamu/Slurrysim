@@ -508,6 +508,10 @@ models, with unit conversion and validation.
 
 ### P3.3 Select and specify the settling model
 
+**Status:** Complete as a draft decision record (2026-08-02); the proposed
+isolated-sphere model is not approved, and P3.4 remains blocked pending qualified
+domain review and primary-source transcription verification.
+
 **Depends on:** P3.1 and P3.2.
 
 **Goal:** Make a reviewable model choice rather than silently encoding one
@@ -753,7 +757,7 @@ Use this template for choices that affect later chats:
 
 - [ ] P3.1 units, assumptions, and governance
 - [x] P3.2 fluid and particle properties
-- [ ] P3.3 settling-model selection
+- [x] P3.3 settling-model selection (draft; domain approval pending)
 - [ ] P3.4 settling-model implementation
 - [ ] P3.5 calibration and expected-result fixtures
 - [ ] P3.6 scenario export/import
